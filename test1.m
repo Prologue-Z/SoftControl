@@ -130,9 +130,9 @@ for i=1:length(t)-1
     limb_vector1_3 = B3_0 + P - A3_0;
 
     % 第二层的驱动杆的方向向量
-    limb_vector2_1 = B4_1 + P - B1_1;
-    limb_vector2_2 = B5_1 + P - B2_1;
-    limb_vector2_3 = B6_1 + P - B3_1;
+    limb_vector2_1 = C1_1 + P - B1_1;
+    limb_vector2_2 = C2_1 + P - B2_1;
+    limb_vector2_3 = C3_1 + P - B3_1;
 
     % 第一层驱动杆单位向量
     unit_vector1_1 = limb_vector1_1/sqrt(limb_vector1_1'*limb_vector1_1);
@@ -148,11 +148,11 @@ for i=1:length(t)-1
     J_fail = [cross(B1_0,unit_vector1_1)';cross(B2_0,unit_vector1_2)';cross(B3_0,unit_vector1_3)'];
 
     % 第二层并联平台构型空间到驱动空间雅克比矩阵
-    J_fai2 = [cross(B4_1,unit_vector2_1)';cross(B5_1,unit_vector2_2)';cross(B6_1,unit_vector2_3)'];
+    J_fai2 = [cross(C1_1,unit_vector2_1)';cross(C2_1,unit_vector2_2)';cross(C3_1,unit_vector2_3)'];
 
     % 驱动长度偏差
-    delta_length(1,:,i) = [J_fail*[delta_theta(1,:,i)';0]]';
-    delta_length(2,:,i) = [J_fai2*[delta_theta(2,:,i)';0]]';
+    delta_length(1,:,i) = [J_fail.*[delta_theta(1,:,i)';0]]';
+    delta_length(2,:,i) = [J_fai2.*[delta_theta(2,:,i)';0]]';
 
     % 增益
     kp = 3000;
