@@ -1,4 +1,5 @@
 clc;
+clear;
 
 % 多层并联平台避奇异避障变增益仿真
 % 采用国际单位制SI（米，秒，千克，牛）
@@ -119,13 +120,15 @@ for i=1:length(t)-1
     delta_theta(2,:,i) = delta_theta_temp(3:4,i)';
 
     % 第一层动平台与空间坐标系齐次变换矩阵
-    T01 = [cos(theta(1,2,i)),sin(theta(1,2,i))*sin(theta(1,1,i)),sin(theta(1,2,i))*cos(theta(1,1,i));
-        0,cos(theta(1,1,i)),-sin(theta(1,1,i));
-        -sin(theta(1,2,i)),cos(theta(1,2,i))*sin(theta(1,1,i)),cos(theta(1,2,i))*cos(theta(1,1,i))];
+    T01 = [cos(theta(1,2,i)),sin(theta(1,2,i))*sin(theta(1,1,i)),sin(theta(1,2,i))*cos(theta(1,1,i)),0;
+        0,cos(theta(1,1,i)),-sin(theta(1,1,i)),0;
+        -sin(theta(1,2,i)),cos(theta(1,2,i))*sin(theta(1,1,i)),cos(theta(1,2,i))*cos(theta(1,1,i)),C_s;
+        0,0,0,1];
     % 第二层动平台与第一层动平台齐次变换矩阵
-    T12 = [cos(theta(2,2,i)),sin(theta(2,2,i))*sin(theta(2,1,i)),sin(theta(2,2,i))*cos(theta(2,1,i));
-        0,cos(theta(2,1,i)),-sin(theta(2,1,i));
-        -sin(theta(2,2,i)),cos(theta(2,2,i))*sin(theta(2,1,i)),cos(theta(2,2,i))*cos(theta(2,1,i))];
+    T12 = [cos(theta(2,2,i)),sin(theta(2,2,i))*sin(theta(2,1,i)),sin(theta(2,2,i))*cos(theta(2,1,i)),0;
+        0,cos(theta(2,1,i)),-sin(theta(2,1,i)),0;
+        -sin(theta(2,2,i)),cos(theta(2,2,i))*sin(theta(2,1,i)),cos(theta(2,2,i))*cos(theta(2,1,i)),C_s;
+        0,0,0,1];
 
     % 动平台各端点在自身坐标系下的坐标表示，下划线后数字表示坐标系
     A1_0(:,i) = [-R/2;-sqrt(3)/2*R;0]; 
@@ -141,17 +144,17 @@ for i=1:length(t)-1
     C3_2(:,i) = [-R/2;sqrt(3)/2*R;0];
 
     % 当前构型下，动平台端点位置向量在下一个坐标系下的描述
-    B1_0(:,i) = T01 * B1_1(:,i);
-    B2_0(:,i) = T01 * B2_1(:,i);
-    B3_0(:,i) = T01 * B3_1(:,i);
+    B1_0(:,i) = Ret_TopThree(T01 * [B1_1(:,i);1]);
+    B2_0(:,i) = Ret_TopThree(T01 * [B2_1(:,i);1]);
+    B3_0(:,i) = Ret_TopThree(T01 * [B3_1(:,i);1]);
 
-    C1_1(:,i) = T12 * C1_2(:,i);
-    C2_1(:,i) = T12 * C2_2(:,i);
-    C3_1(:,i) = T12 * C3_2(:,i);
+    C1_1(:,i) = Ret_TopThree(T12 * [C1_2(:,i);1]);
+    C2_1(:,i) = Ret_TopThree(T12 * [C2_2(:,i);1]);
+    C3_1(:,i) = Ret_TopThree(T12 * [C3_2(:,i);1]);
 
-    C1_0(:,i) = T01 * C1_1(:,i);
-    C2_0(:,i) = T01 * C2_1(:,i);
-    C3_0(:,i) = T01 * C3_1(:,i); 
+    C1_0(:,i) = Ret_TopThree(T01 * [C1_1(:,i);1]);
+    C2_0(:,i) = Ret_TopThree(T01 * [C2_1(:,i);1]);
+    C3_0(:,i) = Ret_TopThree(T01 * [C3_1(:,i);1]); 
 
     P=[0;0;C_s];% 动平台质心在其所在坐标系指向下一层质心位置向量
 
@@ -245,10 +248,14 @@ end
 % view(-60,40);
 
 % % 绘制并联平台仿真动画
-M = moviein(length(t));
-% 创建电影
-for k = 1:length(t)
+% 创建视频
+V_Sim = VideoWriter('Video_Sim.avi');
+V_Sim.FrameRate = 10;%每秒帧数
 
+open(V_Sim);
+
+for k = 1:length(t)
+ 
    plot3([A1_0(1,k),A2_0(1,k)],[A1_0(2,k),A2_0(2,k)],[A1_0(3,k),A2_0(3,k)],'k','LineWidth',2); %A1-A2
    hold on 
    plot3([A1_0(1,k),A3_0(1,k)],[A1_0(2,k),A3_0(2,k)],[A1_0(3,k),A3_0(3,k)],'k','LineWidth',2); %A1-A3
@@ -283,16 +290,19 @@ for k = 1:length(t)
    hold on 
    plot3([B3_0(1,k),C3_0(1,k)],[B3_0(2,k),C3_0(2,k)],[B3_0(3,k),C3_0(3,k)],'k','LineWidth',2); %B3-C3 
    hold on 
+   
    grid on
    
-   axis equal;
+   axis([-0.25,0.25,-0.25,0.25,0,0.5]);
+   % 定义坐标范围
 
-    % 调用getframe函数生成每个帧
-   M(:,k) = getframe;
+   % 调用getframe函数生成每个帧
+   frame = getframe(gcf);
+   writeVideo(V_Sim,frame);  
+   hold off
 end
 
-% 调用movie函数将电影动画矩阵M(k)播放1次
-movie(M, 1);
+close(V_Sim);
 
 
 
