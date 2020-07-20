@@ -60,7 +60,11 @@ C3_1 = zeros(3,length(t));
 
 C1_0 = zeros(3,length(t)); 
 C2_0 = zeros(3,length(t)); 
-C3_0 = zeros(3,length(t)); 
+C3_0 = zeros(3,length(t));
+
+A0_0 = zeros(3,length(t));
+B0_0 = zeros(3,length(t));
+C0_0 = zeros(3,length(t));
 
 % 末端位置位置偏差
 delta_position=zeros(3,length(t));
@@ -130,7 +134,7 @@ for i=1:length(t)-1
         -sin(theta(2,2,i)),cos(theta(2,2,i))*sin(theta(2,1,i)),cos(theta(2,2,i))*cos(theta(2,1,i)),C_s;
         0,0,0,1];
 
-    % 动平台各端点在自身坐标系下的坐标表示，下划线后数字表示坐标系
+    % 动平台各端点在自身坐标系下的坐标表示，0表示中心点，下划线后数字表示坐标系，0表示全局坐标系
     A1_0(:,i) = [-R/2;-sqrt(3)/2*R;0]; 
     A2_0(:,i) = [R;0;0]; 
     A3_0(:,i) = [-R/2;sqrt(3)/2*R;0];
@@ -155,6 +159,19 @@ for i=1:length(t)-1
     C1_0(:,i) = Ret_TopThree(T01 * [C1_1(:,i);1]);
     C2_0(:,i) = Ret_TopThree(T01 * [C2_1(:,i);1]);
     C3_0(:,i) = Ret_TopThree(T01 * [C3_1(:,i);1]); 
+
+    %第一层中心点
+    A0_0(1,i) = (A1_0(1,i)+A2_0(1,i)+A3_0(1,i))/3;
+    A0_0(2,i) = (A1_0(2,i)+A2_0(2,i)+A3_0(2,i))/3;
+    A0_0(3,i) = (A1_0(3,i)+A2_0(3,i)+A3_0(3,i))/3;
+    %第二层中心点
+    B0_0(1,i) = (B1_0(1,i)+B2_0(1,i)+B3_0(1,i))/3;
+    B0_0(2,i) = (B1_0(2,i)+B2_0(2,i)+B3_0(2,i))/3;
+    B0_0(3,i) = (B1_0(3,i)+B2_0(3,i)+B3_0(3,i))/3;
+    %第三层中心点
+    C0_0(1,i) = (C1_0(1,i)+C2_0(1,i)+C3_0(1,i))/3;
+    C0_0(2,i) = (C1_0(2,i)+C2_0(2,i)+C3_0(2,i))/3;
+    C0_0(3,i) = (C1_0(3,i)+C2_0(3,i)+C3_0(3,i))/3;
 
     P=[0;0;C_s];% 动平台质心在其所在坐标系指向下一层质心位置向量
 
@@ -250,7 +267,7 @@ end
 % % 绘制并联平台仿真动画
 % 创建视频
 V_Sim = VideoWriter('Video_Sim.avi');
-V_Sim.FrameRate = 10;%每秒帧数
+V_Sim.FrameRate = 1000;%每秒帧数
 
 open(V_Sim);
 
@@ -289,8 +306,24 @@ for k = 1:length(t)
    plot3([B2_0(1,k),C2_0(1,k)],[B2_0(2,k),C2_0(2,k)],[B2_0(3,k),C2_0(3,k)],'k','LineWidth',2); %B2-C2  
    hold on 
    plot3([B3_0(1,k),C3_0(1,k)],[B3_0(2,k),C3_0(2,k)],[B3_0(3,k),C3_0(3,k)],'k','LineWidth',2); %B3-C3 
-   hold on 
+   hold on
    
+   plot3([A0_0(1,k),B0_0(1,k)],[A0_0(2,k),B0_0(2,k)],[A0_0(3,k),B0_0(3,k)],'r','LineWidth',2); %A0-B0
+   hold on
+   plot3([B0_0(1,k),C0_0(1,k)],[B0_0(2,k),C0_0(2,k)],[B0_0(3,k),C0_0(3,k)],'r','LineWidth',2); %B0-c0
+   hold on
+   
+   % 直线末端轨迹
+   plot3(Path_actual(1,1:k),Path_actual(2,1:k),Path_actual(3,1:k),'g','LineWidth',2); 
+   hold on
+   % 期望末端轨迹
+   plot3(Path_desired(1,1:k),Path_desired(2,1:k),Path_desired(3,1:k),'b','LineWidth',2);
+   hold on
+   
+   %当前末端点
+   scatter3(Path_actual(1,1:k),Path_actual(2,1:k),Path_actual(3,1:k),20,'r','filled');
+   hold on
+
    grid on
    
    axis([-0.25,0.25,-0.25,0.25,0,0.5]);
