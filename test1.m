@@ -35,6 +35,32 @@ theta(1,2,1) = pi/24;
 theta(2,1,1) = pi/24;
 theta(2,2,1) = pi/24;
 
+% 各点坐标
+% 动平台各端点在自身坐标系下的坐标表示，下划线后数字表示坐标系
+A1_0 = zeros(3,length(t)); 
+A2_0 = zeros(3,length(t)); 
+A3_0 = zeros(3,length(t)); 
+
+B1_1 = zeros(3,length(t)); 
+B2_1 = zeros(3,length(t)); 
+B3_1 = zeros(3,length(t)); 
+
+C1_2 = zeros(3,length(t)); 
+C2_2 = zeros(3,length(t)); 
+C3_2 = zeros(3,length(t)); 
+
+B1_0 = zeros(3,length(t)); 
+B2_0 = zeros(3,length(t)); 
+B3_0 = zeros(3,length(t)); 
+
+C1_1 = zeros(3,length(t)); 
+C2_1 = zeros(3,length(t)); 
+C3_1 = zeros(3,length(t)); 
+
+C1_0 = zeros(3,length(t)); 
+C2_0 = zeros(3,length(t)); 
+C3_0 = zeros(3,length(t)); 
+
 % 末端位置位置偏差
 delta_position=zeros(3,length(t));
 % 构型角度偏差
@@ -47,6 +73,7 @@ driving_force=zeros(2,3,length(t));
 driving_torque=zeros(2,2,length(t));
 % 角加速度
 angular_acceleration = zeros(2,2,length(t));
+% 角速度
 omega = zeros(2,2,length(t));
 % 位置误差
 error_position=zeros(3,length(t));
@@ -101,42 +128,42 @@ for i=1:length(t)-1
         -sin(theta(2,2,i)),cos(theta(2,2,i))*sin(theta(2,1,i)),cos(theta(2,2,i))*cos(theta(2,1,i))];
 
     % 动平台各端点在自身坐标系下的坐标表示，下划线后数字表示坐标系
-    A1_0 = [-R/2;-sqrt(3)/2*R;0]; 
-    A2_0 = [R;0;0]; 
-    A3_0 = [-R/2;sqrt(3)/2*R;0];
+    A1_0(:,i) = [-R/2;-sqrt(3)/2*R;0]; 
+    A2_0(:,i) = [R;0;0]; 
+    A3_0(:,i) = [-R/2;sqrt(3)/2*R;0];
 
-    B1_1 = [-R/2;-sqrt(3)/2*R;0]; 
-    B2_1 = [R;0;0]; 
-    B3_1 = [-R/2;sqrt(3)/2*R;0];
+    B1_1(:,i) = [-R/2;-sqrt(3)/2*R;0]; 
+    B2_1(:,i) = [R;0;0]; 
+    B3_1(:,i) = [-R/2;sqrt(3)/2*R;0];
  
-    C1_2 = [-R/2;-sqrt(3)/2*R;0]; 
-    C2_2 = [R;0;0]; 
-    C3_2 = [-R/2;sqrt(3)/2*R;0];
+    C1_2(:,i) = [-R/2;-sqrt(3)/2*R;0]; 
+    C2_2(:,i) = [R;0;0]; 
+    C3_2(:,i) = [-R/2;sqrt(3)/2*R;0];
 
     % 当前构型下，动平台端点位置向量在下一个坐标系下的描述
-    B1_0 = T01 * B1_1;
-    B2_0 = T01 * B2_1;
-    B3_0 = T01 * B3_1;
+    B1_0(:,i) = T01 * B1_1(:,i);
+    B2_0(:,i) = T01 * B2_1(:,i);
+    B3_0(:,i) = T01 * B3_1(:,i);
 
-    C1_1 = T12 * C1_2;
-    C2_1 = T12 * C2_2;
-    C3_1 = T12 * C3_2;
+    C1_1(:,i) = T12 * C1_2(:,i);
+    C2_1(:,i) = T12 * C2_2(:,i);
+    C3_1(:,i) = T12 * C3_2(:,i);
 
-    % C1_0 = T01 * C1_1;
-    % C2_0 = T01 * C2_1;
-    % C3_0 = T01 * C3_1; 
+    C1_0(:,i) = T01 * C1_1(:,i);
+    C2_0(:,i) = T01 * C2_1(:,i);
+    C3_0(:,i) = T01 * C3_1(:,i); 
 
     P=[0;0;C_s];% 动平台质心在其所在坐标系指向下一层质心位置向量
 
     % 第一层各驱动杆的方向向量
-    limb_vector1_1 = B1_0 + P - A1_0;
-    limb_vector1_2 = B2_0 + P - A2_0;
-    limb_vector1_3 = B3_0 + P - A3_0;
+    limb_vector1_1 = B1_0(:,i) + P - A1_0(:,i);
+    limb_vector1_2 = B2_0(:,i) + P - A2_0(:,i);
+    limb_vector1_3 = B3_0(:,i) + P - A3_0(:,i);
 
     % 第二层的驱动杆的方向向量
-    limb_vector2_1 = C1_1 + P - B1_1;
-    limb_vector2_2 = C2_1 + P - B2_1;
-    limb_vector2_3 = C3_1 + P - B3_1;
+    limb_vector2_1 = C1_1(:,i) + P - B1_1(:,i);
+    limb_vector2_2 = C2_1(:,i) + P - B2_1(:,i);
+    limb_vector2_3 = C3_1(:,i) + P - B3_1(:,i);
 
     % 第一层驱动杆单位向量
     unit_vector1_1 = limb_vector1_1/sqrt(limb_vector1_1'*limb_vector1_1);
@@ -149,10 +176,10 @@ for i=1:length(t)-1
     unit_vector2_3 = limb_vector2_3/sqrt(limb_vector2_3'*limb_vector2_3);
 
     % 第一层并联平台构型空间到驱动空间雅克比矩阵
-    J_fail = [cross(B1_0,unit_vector1_1)';cross(B2_0,unit_vector1_2)';cross(B3_0,unit_vector1_3)'];
+    J_fail = [cross(B1_0(:,i),unit_vector1_1)';cross(B2_0(:,i),unit_vector1_2)';cross(B3_0(:,i),unit_vector1_3)'];
 
     % 第二层并联平台构型空间到驱动空间雅克比矩阵
-    J_fai2 = [cross(C1_1,unit_vector2_1)';cross(C2_1,unit_vector2_2)';cross(C3_1,unit_vector2_3)'];
+    J_fai2 = [cross(C1_1(:,i),unit_vector2_1)';cross(C2_1(:,i),unit_vector2_2)';cross(C3_1(:,i),unit_vector2_3)'];
 
     % 驱动长度偏差
     delta_length(1,:,i) = (J_fail*[delta_theta(1,:,i)';0])';
@@ -197,29 +224,75 @@ for i=1:length(t)-1
     error_position(2,i)=Path_desired(2,i)-Path_actual(2,i);
     % z方向误差
     error_position(3,i)=Path_desired(3,i)-Path_actual(3,i);
-
 end
 
 
-%  % % 直线末端轨迹
-plot3(Path_actual(1,:),Path_actual(2,:),Path_actual(3,:),'r','LineWidth',2); 
-hold on;
+% % % 绘制预期末端与实际末端轨迹plot图像
+% % 直线末端轨迹
+% plot3(Path_actual(1,:),Path_actual(2,:),Path_actual(3,:),'r','LineWidth',2); 
+% hold on;
 % % 期望末端轨迹
-plot3(Path_desired(1,:),Path_desired(2,:),Path_desired(3,:),'b','LineWidth',2);
-% %给定坐标范围
+% plot3(Path_desired(1,:),Path_desired(2,:),Path_desired(3,:),'b','LineWidth',2);
+% hold on;
+% % 给定坐标范围
 % axis([-0.5 0.5 -0.3 0.3 0.82 0.88]);
-hold on;
-% grid on; 
-h=legend('实际轨迹','期望轨迹');
-xlabel('X/m');ylabel('Y/m');zlabel('Z/m'); 
+% grid on;%打开网格
+% h=legend('实际轨迹','期望轨迹');
+% xlabel('X/m');ylabel('Y/m');zlabel('Z/m'); 
 % title('运动轨迹跟踪结果');
-set(h,'fontsize',16);
-set(gca,'Fontsize',13)
-view(-60,40);
+% set(h,'Fontsize',16);
+% set(gca,'Fontsize',13)
+% view(-60,40);
 
+% % 绘制并联平台仿真动画
+M = moviein(length(t));
+% 创建电影
+for k = 1:length(t)
 
+   plot3([A1_0(1,k),A2_0(1,k)],[A1_0(2,k),A2_0(2,k)],[A1_0(3,k),A2_0(3,k)],'k','LineWidth',2); %A1-A2
+   hold on 
+   plot3([A1_0(1,k),A3_0(1,k)],[A1_0(2,k),A3_0(2,k)],[A1_0(3,k),A3_0(3,k)],'k','LineWidth',2); %A1-A3
+   hold on 
+   plot3([A2_0(1,k),A3_0(1,k)],[A2_0(2,k),A3_0(2,k)],[A2_0(3,k),A3_0(3,k)],'k','LineWidth',2); %A2-A3
+   hold on 
 
+   plot3([B1_0(1,k),B2_0(1,k)],[B1_0(2,k),B2_0(2,k)],[B1_0(3,k),B2_0(3,k)],'k','LineWidth',2); %B1-B2
+   hold on 
+   plot3([B1_0(1,k),B3_0(1,k)],[B1_0(2,k),B3_0(2,k)],[B1_0(3,k),B3_0(3,k)],'k','LineWidth',2); %B1-B3
+   hold on 
+   plot3([B2_0(1,k),B3_0(1,k)],[B2_0(2,k),B3_0(2,k)],[B2_0(3,k),B3_0(3,k)],'k','LineWidth',2); %B2-B3
+   hold on 
 
+   plot3([C1_0(1,k),C2_0(1,k)],[C1_0(2,k),C2_0(2,k)],[C1_0(3,k),C2_0(3,k)],'k','LineWidth',2); %C1-C2
+   hold on 
+   plot3([C1_0(1,k),C3_0(1,k)],[C1_0(2,k),C3_0(2,k)],[C1_0(3,k),C3_0(3,k)],'k','LineWidth',2); %C1-C3
+   hold on 
+   plot3([C2_0(1,k),C3_0(1,k)],[C2_0(2,k),C3_0(2,k)],[C2_0(3,k),C3_0(3,k)],'k','LineWidth',2); %C2-C3
+   hold on 
+   
+   plot3([A1_0(1,k),B1_0(1,k)],[A1_0(2,k),B1_0(2,k)],[A1_0(3,k),B1_0(3,k)],'k','LineWidth',2); %A1-B1  
+   hold on  
+   plot3([A2_0(1,k),B2_0(1,k)],[A2_0(2,k),B2_0(2,k)],[A2_0(3,k),B2_0(3,k)],'k','LineWidth',2); %A2-B2
+   hold on 
+   plot3([A3_0(1,k),B3_0(1,k)],[A3_0(2,k),B3_0(2,k)],[A3_0(3,k),B3_0(3,k)],'k','LineWidth',2); %A3-B3
+   hold on 
+
+   plot3([B1_0(1,k),C1_0(1,k)],[B1_0(2,k),C1_0(2,k)],[B1_0(3,k),C1_0(3,k)],'k','LineWidth',2); %B1-C1 
+   hold on  
+   plot3([B2_0(1,k),C2_0(1,k)],[B2_0(2,k),C2_0(2,k)],[B2_0(3,k),C2_0(3,k)],'k','LineWidth',2); %B2-C2  
+   hold on 
+   plot3([B3_0(1,k),C3_0(1,k)],[B3_0(2,k),C3_0(2,k)],[B3_0(3,k),C3_0(3,k)],'k','LineWidth',2); %B3-C3 
+   hold on 
+   grid on
+   
+   axis equal;
+
+    % 调用getframe函数生成每个帧
+   M(:,k) = getframe;
+end
+
+% 调用movie函数将电影动画矩阵M(k)播放1次
+movie(M, 1);
 
 
 
