@@ -2,7 +2,7 @@ clc;
 clear;
 
 % 多层并联平台避奇异避障变增益仿真模型
-% 此程序为直接跟随模式，无避障，无避奇异，无变增益
+% 此程序为变增益程序
 % 采用国际单位制SI（米，秒，千克，牛）
 
 %% 基本参数设定
@@ -23,9 +23,9 @@ C_s = 0.16;% 动平台中心杆长度
 
 % 末端期望直线运动轨迹——非匀速
 Path_desired = zeros(3,length(t));
-Path_desired(1,:) = 0.1031/(2*pi)*sin(2*pi/T.*t - pi) + 0.1031/T*t + 0.3814;
-Path_desired(2,:) = 0.7801/(2*pi)*sin(2*pi/T.*t - pi) + 0.7801/T*t - 0.3966;
-Path_desired(3,:) = -0.0810/(2*pi)*sin(2*pi/T.*t - pi) - 0.0810/T*t + 0.8884;
+Path_desired(1,:) = 0.1031/T*t + 0.3814;
+Path_desired(2,:) = 0.7801/T*t - 0.3966;
+Path_desired(3,:) = - 0.0810/T*t + 0.8884;
 
 
 %% 实际运动轨迹设定
@@ -459,10 +459,10 @@ for i=1:length(t)-1
 
 
     % 计算下一时刻角速度
-    omega(:,:,i+1)=omega(:,:,i)+angular_acceleration(:,:,i)*delta_t;
+    omega(:,:,i+1) = omega(:,:,i) + angular_acceleration(:,:,i)*delta_t;
   
     % 计算下一时刻构型角度
-    theta(:,:,i+1)=theta(:,:,i)+omega(:,:,i)*delta_t;
+    theta(:,:,i+1) = theta(:,:,i) + omega(:,:,i)*delta_t;
     
     %% 求出下一时刻实际位置
     % 计算下一时刻实际位置
@@ -668,12 +668,27 @@ end
 % set(gca,'Fontsize',16)
 
 %% 直线轨迹绝对跟踪误差
-plot(t,AbsoluteError_Position(1,:),'r','LineWidth',2);
-hold on 
-grid on; 
-% xlabel('t/s');ylabel('Y/m');
-axis([0 5 0 0.006]);
-title('最小范数解轨迹跟踪误差')
-set(gca,'Fontsize',16)
+% plot(t,AbsoluteError_Position(1,:),'r','LineWidth',2);
+% hold on 
+% grid on; 
+% % xlabel('t/s');ylabel('Y/m');
+% axis([0 5 0 0.006]);
+% title('最小范数解轨迹跟踪误差')
+% set(gca,'Fontsize',16)
+
+%% 构型空间各角速度plot图像
+% 角速度
+plot(t,omega(1,1,:),'LineWidth',2); 
+hold on;
+plot(t,omega(1,2,:),'LineWidth',2); 
+hold on;
+plot(t,omega(4,1,:),'LineWidth',2); 
+hold on;
+plot(t,omega(4,2,:),'LineWidth',2); 
+hold on;
+
+grid on;%打开网格
+
+title('构型角速度—时间图像');
 
     
