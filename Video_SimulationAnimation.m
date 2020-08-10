@@ -1,4 +1,4 @@
-function [] = Video_SimulationAnimation(A1_0,A2_0,A3_0,B1_0,B2_0,B3_0,C1_0,C2_0,C3_0,D1_0,D2_0,D3_0,E1_0,E2_0,E3_0,F1_0,F2_0,F3_0,G1_0,G2_0,G3_0,A0_0,B0_0,C0_0,D0_0,E0_0,F0_0,G0_0,H0_0,Path_desired,Path_actual)
+function [] = Video_SimulationAnimation(t,A1_0,A2_0,A3_0,B1_0,B2_0,B3_0,C1_0,C2_0,C3_0,D1_0,D2_0,D3_0,E1_0,E2_0,E3_0,F1_0,F2_0,F3_0,G1_0,G2_0,G3_0,A0_0,B0_0,C0_0,D0_0,E0_0,F0_0,G0_0,H0_0,Path_desired,Path_actual)
 % 绘制并联平台仿真动画
 
 % 创建视频

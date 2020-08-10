@@ -16,7 +16,7 @@ g = 9.8;% 重力加速度
 R = 0.07; % 动平台外接圆半径
 C_s = 0.16;% 动平台中心杆长度
 % 动力学参数
-kp = 1000000;% 增益
+kp = 100000;% 增益
 c = 0.005; % 角速度项系数
 k = 0.1; % 角度项系数
 m = 0.05;% 质量
@@ -24,10 +24,15 @@ m = 0.05;% 质量
 %% 设定期望运动轨迹
 
 % 末端期望直线运动轨迹——非匀速
-Path_desired = zeros(3,length(t));
-Path_desired(1,:) = 0.1031/(2*pi)*sin(2*pi/T.*t - pi) + 0.1031/T*t + 0.3814;
-Path_desired(2,:) = 0.7801/(2*pi)*sin(2*pi/T.*t - pi) + 0.7801/T*t - 0.3966;
-Path_desired(3,:) = -0.0810/(2*pi)*sin(2*pi/T.*t - pi) - 0.0810/T*t + 0.8884;
+% Path_desired = zeros(3,length(t));
+% Path_desired(1,:) = 0.1031/(2*pi)*sin(2*pi/T.*t - pi) + 0.1031/T*t + 0.3814;
+% Path_desired(2,:) = 0.7801/(2*pi)*sin(2*pi/T.*t - pi) + 0.7801/T*t - 0.3966;
+% Path_desired(3,:) = -0.0810/(2*pi)*sin(2*pi/T.*t - pi) - 0.0810/T*t + 0.8884;
+% 末端期望圆弧运动轨迹
+Path_desired=zeros(3,length(t));
+Path_desired(1,:)=0.05*sin(2.*pi/T.*t-pi)+0.3814;
+Path_desired(2,:)=0.05*cos(2.*pi/T.*t-pi)-0.3466;
+Path_desired(3,:)=0.8884;
 
 %% 实际运动轨迹设定
 % 末端实际运动轨迹
@@ -506,18 +511,18 @@ end
 % Plot_EndTrack(Path_actual,Path_desired);
 
 % 绘制并联平台仿真动画
-% Video_SimulationAnimation(A1_0,A2_0,A3_0,B1_0,B2_0,B3_0,C1_0,C2_0,C3_0,D1_0,D2_0,D3_0,E1_0,E2_0,E3_0,F1_0,F2_0,F3_0,G1_0,G2_0,G3_0,A0_0,B0_0,C0_0,D0_0,E0_0,F0_0,G0_0,H0_0,Path_desired,Path_actual);
+% Video_SimulationAnimation(t,A1_0,A2_0,A3_0,B1_0,B2_0,B3_0,C1_0,C2_0,C3_0,D1_0,D2_0,D3_0,E1_0,E2_0,E3_0,F1_0,F2_0,F3_0,G1_0,G2_0,G3_0,A0_0,B0_0,C0_0,D0_0,E0_0,F0_0,G0_0,H0_0,Path_desired,Path_actual);
 
 % 轨迹跟踪坐标误差
-% Plot_TrackError(CoordinateError_Position);
+% Plot_TrackError(t,CoordinateError_Position);
 
 % 轨迹跟踪绝对误差
-% Plot_TrackError_Absolute(AbsoluteError_Position);
+% Plot_TrackError_Absolute(t,AbsoluteError_Position);
 
 % 构型空间角速度
-% Plot_Omega(Omega,Norm2_Omega);
+% Plot_Omega(t,Omega,Norm2_Omega);
 
 % 末端速度
-%  Plot_EndSpeed(Velocity_Position_Absolute);
+% Plot_EndSpeed(t,Velocity_Position_Absolute);
 
     

@@ -24,10 +24,15 @@ m = 0.05;% 质量
 %% 设定期望运动轨迹
 
 % 末端期望直线运动轨迹——非匀速
-Path_desired = zeros(3,length(t));
-Path_desired(1,:) = 0.1031/(2*pi)*sin(2*pi/T.*t - pi) + 0.1031/T*t + 0.3814;
-Path_desired(2,:) = 0.7801/(2*pi)*sin(2*pi/T.*t - pi) + 0.7801/T*t - 0.3966;
-Path_desired(3,:) = -0.0810/(2*pi)*sin(2*pi/T.*t - pi) - 0.0810/T*t + 0.8884;
+% Path_desired = zeros(3,length(t));
+% Path_desired(1,:) = 0.1031/(2*pi)*sin(2*pi/T.*t - pi) + 0.1031/T*t + 0.3814;
+% Path_desired(2,:) = 0.7801/(2*pi)*sin(2*pi/T.*t - pi) + 0.7801/T*t - 0.3966;
+% Path_desired(3,:) = -0.0810/(2*pi)*sin(2*pi/T.*t - pi) - 0.0810/T*t + 0.8884;
+% 末端期望圆弧运动轨迹
+Path_desired=zeros(3,length(t));
+Path_desired(1,:)=0.05*sin(2.*pi/T.*t-pi)+0.3814;
+Path_desired(2,:)=0.05*cos(2.*pi/T.*t-pi)-0.3466;
+Path_desired(3,:)=0.8884;
 
 %% 实际运动轨迹设定
 % 末端实际运动轨迹
@@ -178,7 +183,7 @@ driving_torque=zeros(6,2,length(t));
 % 角加速度
 angular_acceleration = zeros(6,2,length(t));
 % 角速度
-omega = zeros(6,2,length(t));
+Omega = zeros(6,2,length(t));
 % 位置误差
 CoordinateError_Position = zeros(3,length(t));
 AbsoluteError_Position = zeros(1,length(t));
@@ -449,24 +454,24 @@ for i=1:length(t)-1
     % 角加速度项系数
     X_angular_acceleration = [m*R.^2/4,0;0,m*R.^2/4];
     % 角速度项系数
-    X_omega = [c,0;0,c];
+    X_Omega = [c,0;0,c];
     % 角度项系数
     X_theta = [k,0;0,k];
 
     % 计算当前时刻角加速度
-    angular_acceleration(1,:,i) = (pinv(X_angular_acceleration)*(driving_torque(1,:,i)'-X_omega*omega(1,:,i)'-X_theta*theta(1,:,i)'))';
-    angular_acceleration(2,:,i) = (pinv(X_angular_acceleration)*(driving_torque(2,:,i)'-X_omega*omega(2,:,i)'-X_theta*theta(2,:,i)'))';
-    angular_acceleration(3,:,i) = (pinv(X_angular_acceleration)*(driving_torque(3,:,i)'-X_omega*omega(3,:,i)'-X_theta*theta(3,:,i)'))';
-    angular_acceleration(4,:,i) = (pinv(X_angular_acceleration)*(driving_torque(4,:,i)'-X_omega*omega(4,:,i)'-X_theta*theta(4,:,i)'))';
-    angular_acceleration(5,:,i) = (pinv(X_angular_acceleration)*(driving_torque(5,:,i)'-X_omega*omega(5,:,i)'-X_theta*theta(5,:,i)'))';
-    angular_acceleration(6,:,i) = (pinv(X_angular_acceleration)*(driving_torque(6,:,i)'-X_omega*omega(6,:,i)'-X_theta*theta(6,:,i)'))';
+    angular_acceleration(1,:,i) = (pinv(X_angular_acceleration)*(driving_torque(1,:,i)'-X_Omega*Omega(1,:,i)'-X_theta*theta(1,:,i)'))';
+    angular_acceleration(2,:,i) = (pinv(X_angular_acceleration)*(driving_torque(2,:,i)'-X_Omega*Omega(2,:,i)'-X_theta*theta(2,:,i)'))';
+    angular_acceleration(3,:,i) = (pinv(X_angular_acceleration)*(driving_torque(3,:,i)'-X_Omega*Omega(3,:,i)'-X_theta*theta(3,:,i)'))';
+    angular_acceleration(4,:,i) = (pinv(X_angular_acceleration)*(driving_torque(4,:,i)'-X_Omega*Omega(4,:,i)'-X_theta*theta(4,:,i)'))';
+    angular_acceleration(5,:,i) = (pinv(X_angular_acceleration)*(driving_torque(5,:,i)'-X_Omega*Omega(5,:,i)'-X_theta*theta(5,:,i)'))';
+    angular_acceleration(6,:,i) = (pinv(X_angular_acceleration)*(driving_torque(6,:,i)'-X_Omega*Omega(6,:,i)'-X_theta*theta(6,:,i)'))';
 
 
     % 计算下一时刻角速度
-    omega(:,:,i+1)=omega(:,:,i)+angular_acceleration(:,:,i)*delta_t;
+    Omega(:,:,i+1)=Omega(:,:,i)+angular_acceleration(:,:,i)*delta_t;
   
     % 计算下一时刻构型角度
-    theta(:,:,i+1)=theta(:,:,i) + omega(:,:,i)*delta_t;
+    theta(:,:,i+1)=theta(:,:,i) + Omega(:,:,i)*delta_t;
     
     %% 求出下一时刻实际位置
     % 计算下一时刻实际位置
@@ -495,17 +500,17 @@ end
 % Plot_EndTrack(Path_actual,Path_desired);
 
 % 绘制并联平台仿真动画
-% Video_SimulationAnimation(A1_0,A2_0,A3_0,B1_0,B2_0,B3_0,C1_0,C2_0,C3_0,D1_0,D2_0,D3_0,E1_0,E2_0,E3_0,F1_0,F2_0,F3_0,G1_0,G2_0,G3_0,A0_0,B0_0,C0_0,D0_0,E0_0,F0_0,G0_0,H0_0,Path_desired,Path_actual);
+% Video_SimulationAnimation(t,A1_0,A2_0,A3_0,B1_0,B2_0,B3_0,C1_0,C2_0,C3_0,D1_0,D2_0,D3_0,E1_0,E2_0,E3_0,F1_0,F2_0,F3_0,G1_0,G2_0,G3_0,A0_0,B0_0,C0_0,D0_0,E0_0,F0_0,G0_0,H0_0,Path_desired,Path_actual);
 
 % 轨迹跟踪坐标误差
-% Plot_TrackError(CoordinateError_Position);
+% Plot_TrackError(t,CoordinateError_Position);
 
 % 轨迹跟踪绝对误差
-% Plot_TrackError_Absolute(AbsoluteError_Position);
+% Plot_TrackError_Absolute(t,AbsoluteError_Position);
 
 % 构型空间角速度
-% Plot_Omega(Omega,Norm2_Omega);
+% Plot_Omega(t,Omega,Norm2_Omega);
 
 % 末端速度
-%  Plot_EndSpeed(Velocity_Position_Absolute);
+% Plot_EndSpeed(t,Velocity_Position_Absolute);
     

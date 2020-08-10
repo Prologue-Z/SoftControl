@@ -1,4 +1,4 @@
-function [] = Plot_Omega(Omega,Norm2_Omega)
+function [] = Plot_Omega(t,Omega,Norm2_Omega)
 % 构形空间角速度图像
 
 % 角速度矩阵的广义转置（三维数组第三维元素无法直接提取向量）
@@ -16,6 +16,6 @@ plot(t,Norm2_Omega(1,:)','LineWidth',2);
 hold on;
 
 grid on;%打开网格
-title('构型角速度—时间图像');
+title('构型空间角速度—时间图像');
 end
 

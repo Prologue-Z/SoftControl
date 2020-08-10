@@ -12,13 +12,13 @@ hold on;
 plot3(Path_actual(1,1),Path_actual(2,1),Path_actual(3,1),'.','Color','g','MarkerSize',30);
 hold on;
 % 给定坐标范围
-axis([0.3 0.5 -0.4 0.4 0.80 0.90]);
+axis([0.3 0.5 -0.4 -0.25 0.86 0.90]);
 grid on;%打开网格
 h=legend('实际轨迹','期望轨迹','起点');
 xlabel('X/m');ylabel('Y/m');zlabel('Z/m'); 
 title('运动轨迹跟踪结果');
 set(h,'Fontsize',16);
 set(gca,'Fontsize',13)
-view(60,40);
+view(60,20);
 end
 

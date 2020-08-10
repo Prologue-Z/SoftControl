@@ -1,4 +1,4 @@
-function [] = Plot_EndSpeed(Velocity_Position_Absolute)
+function [] = Plot_EndSpeed(t,Velocity_Position_Absolute)
 % Ä©¶ËËÙ¶ÈÍ¼Ïñ
 
 plot(t,Velocity_Position_Absolute(1,:),'LineWidth',2); 
