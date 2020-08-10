@@ -24,15 +24,15 @@ m = 0.05;% 质量
 %% 设定期望运动轨迹
 
 % 末端期望直线运动轨迹——非匀速
-% Path_desired = zeros(3,length(t));
-% Path_desired(1,:) = 0.1031/(2*pi)*sin(2*pi/T.*t - pi) + 0.1031/T*t + 0.3814;
-% Path_desired(2,:) = 0.7801/(2*pi)*sin(2*pi/T.*t - pi) + 0.7801/T*t - 0.3966;
-% Path_desired(3,:) = -0.0810/(2*pi)*sin(2*pi/T.*t - pi) - 0.0810/T*t + 0.8884;
+Path_desired = zeros(3,length(t));
+Path_desired(1,:) = 0.1031/(2*pi)*sin(2*pi/T.*t - pi) + 0.1031/T*t + 0.3814;
+Path_desired(2,:) = 0.7801/(2*pi)*sin(2*pi/T.*t - pi) + 0.7801/T*t - 0.3966;
+Path_desired(3,:) = -0.0810/(2*pi)*sin(2*pi/T.*t - pi) - 0.0810/T*t + 0.8884;
 % 末端期望圆弧运动轨迹
-Path_desired=zeros(3,length(t));
-Path_desired(1,:)=0.05*sin(2.*pi/T.*t-pi)+0.3814;
-Path_desired(2,:)=0.05*cos(2.*pi/T.*t-pi)-0.3466;
-Path_desired(3,:)=0.8884;
+% Path_desired=zeros(3,length(t));
+% Path_desired(1,:)=0.05*sin(2.*pi/T.*t-pi)+0.3814;
+% Path_desired(2,:)=0.05*cos(2.*pi/T.*t-pi)-0.3466;
+% Path_desired(3,:)=0.8884;
 
 %% 实际运动轨迹设定
 % 末端实际运动轨迹
@@ -469,6 +469,8 @@ for i=1:length(t)-1
 
     % 计算下一时刻角速度
     Omega(:,:,i+1)=Omega(:,:,i)+angular_acceleration(:,:,i)*delta_t;
+    % 角速度二范数赋值
+    Norm2_Omega(1,i+1) = sqrt(Omega(1,1,i+1)^2 + Omega(1,2,i+1)^2 + Omega(4,1,i+1)^2 + Omega(4,2,i+1)^2);
   
     % 计算下一时刻构型角度
     theta(:,:,i+1)=theta(:,:,i) + Omega(:,:,i)*delta_t;
@@ -509,8 +511,12 @@ end
 % Plot_TrackError_Absolute(t,AbsoluteError_Position);
 
 % 构型空间角速度
-% Plot_Omega(t,Omega,Norm2_Omega);
+% Plot_Omega(t,Omega);
+
+% 构型空间角速度二范数
+% Plot_OmegaNorm2(t,Norm2_Omega);
 
 % 末端速度
 % Plot_EndSpeed(t,Velocity_Position_Absolute);
+
     
