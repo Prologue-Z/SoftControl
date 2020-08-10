@@ -16,7 +16,7 @@ g = 9.8;% 重力加速度
 R = 0.07; % 动平台外接圆半径
 C_s = 0.16;% 动平台中心杆长度
 % 动力学参数
-kp = 3000;% 增益
+kp = 1000000;% 增益
 c = 0.005; % 角速度项系数
 k = 0.1; % 角度项系数
 m = 0.05;% 质量
@@ -220,7 +220,8 @@ for i=1:length(t)-2
     if i == 1
         delta_position(:,i) = (Path_desired(:,i+1)-Path_actual(:,i)) * (50 * norm(Path_desired(:,length(t))-Path_desired(:,1),2)/norm(Path_desired(:,i+1)-Path_actual(:,i),2)/(length(t)-1));
     else
-        delta_position(:,i) = (Path_desired(:,i+2)-Path_actual(:,i+1)) * (norm(Path_actual(:,i+1)-Path_actual(:,i),2)/norm(Path_desired(:,i+2)-Path_actual(:,i+1),2)) - (Path_actual(:,i+1)-Path_actual(:,i));
+        % delta_position(:,i) = (Path_desired(:,i+2)-Path_actual(:,i+1)) * (norm(Path_actual(:,i+1)-Path_actual(:,i),2)/norm(Path_desired(:,i+2)-Path_actual(:,i+1),2)) - (Path_actual(:,i+1)-Path_actual(:,i));
+        delta_position(:,i) = (Path_desired(:,i+2)-Path_actual(:,i+1)) - (Path_actual(:,i+1)-Path_actual(:,i));
     end
     % delta_position(:,i) = (Path_desired(:,i+2)-Path_actual(:,i+1)) - (Path_actual(:,i+1)-Path_actual(:,i));
     
@@ -503,21 +504,21 @@ end
 
 
 %% 绘制预期末端与实际末端轨迹plot图像
-% % 直线末端轨迹
-% plot3(Path_actual(1,:),Path_actual(2,:),Path_actual(3,:),'LineWidth',2); 
-% hold on;
-% % 期望末端轨迹
-% plot3(Path_desired(1,:),Path_desired(2,:),Path_desired(3,:),'LineWidth',2);
-% hold on;
-% % 给定坐标范围
-% axis([-0.5 0.5 -0.3 0.3 0.82 0.88]);
-% grid on;%打开网格
-% h=legend('实际轨迹','期望轨迹');
-% xlabel('X/m');ylabel('Y/m');zlabel('Z/m'); 
-% title('运动轨迹跟踪结果');
-% set(h,'Fontsize',16);
-% set(gca,'Fontsize',13)
-% view(-60,40);
+% 直线末端轨迹
+plot3(Path_actual(1,:),Path_actual(2,:),Path_actual(3,:),'LineWidth',2); 
+hold on;
+% 期望末端轨迹
+plot3(Path_desired(1,:),Path_desired(2,:),Path_desired(3,:),'LineWidth',2);
+hold on;
+% 给定坐标范围
+axis([-0.5 0.5 -0.3 0.3 0.82 0.88]);
+grid on;%打开网格
+h=legend('实际轨迹','期望轨迹');
+xlabel('X/m');ylabel('Y/m');zlabel('Z/m'); 
+title('运动轨迹跟踪结果');
+set(h,'Fontsize',16);
+set(gca,'Fontsize',13)
+view(-60,40);
 
 %% 绘制并联平台仿真动画
 % % 创建视频
