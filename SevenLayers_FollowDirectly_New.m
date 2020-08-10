@@ -223,7 +223,7 @@ for i=1:length(t)-2
     %% 求下一时刻的运动学动力学参数
     %% 当前末端位置偏差
     if i == 1
-        delta_position(:,i) = (Path_desired(:,i+1)-Path_actual(:,i)) * (50 * norm(Path_desired(:,length(t))-Path_desired(:,1),2)/norm(Path_desired(:,i+1)-Path_actual(:,i),2)/(length(t)-1));
+        delta_position(:,i) = Path_desired(:,i+1)-Path_actual(:,i);
     else
         delta_position(:,i) = (Path_desired(:,i+2)-Path_actual(:,i+1)) - (Path_actual(:,i+1)-Path_actual(:,i));
     end
