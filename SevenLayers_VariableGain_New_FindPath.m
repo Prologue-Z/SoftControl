@@ -2,7 +2,9 @@ clc;
 clear;
 
 % 多层并联平台避奇异避障变增益仿真模型
-% 此程序为直接跟随模式，无避障，无避奇异，无变增益
+% 此程序为直接跟随模式，无避障，无避奇异，变增益
+% 此程序相对于SevenLayers_VariableGain_New.m程序将轨迹规划修改为实时轨迹规划（直线和圆的交点）
+% 此程序下由于Xd的定义发生变化，坐标误差失去意义
 % 采用国际单位制SI（米，秒，千克，牛）
 
 %% 基本参数设定
@@ -198,7 +200,8 @@ Velocity_Position_Absolute = zeros(1,length(t));
 lamtha = zeros(1,length(t));
 Velocity_Desired = zeros(3,length(t));
 delta_theta_temp1 = zeros(4,length(t));
-i_Desired = zeros(1,length(t));
+Path_FindDesired = zeros(3,length(t));
+
 
 %暂存参数
 delta_theta_temp = zeros(4,length(t));
@@ -283,27 +286,15 @@ for i = 1:length(t)-2
 %         i_Desired(1,i+1) = Find_ClosestToPoint(t,Path_desired,Path_actual(:,i+1),i_Desired(1,i-1));
 %     end
 
-    if i<=5
-        i_Desired(1,i+1) = i+2;
-        Velocity_Desired(:,i) = Path_desired(:,i_Desired(1,i+1)) - Path_actual(:,i+1);
-        delta_theta_temp1(:,i) = J_seven_layers_Pinv(:,:,i) * Velocity_Desired(:,i);
-        lamtha(1,i) = norm(delta_theta_temp1(:,i),2)/norm(Velocity_Desired(:,i),2);
 
-        delta_position(:,i) = Velocity_Desired(:,i)/lamtha(1,i) - (Path_actual(:,i+1)-Path_actual(:,i));
+    Path_FindDesired(:,i+2) = Find_PathDesired(Path_actual(:,i+1),Path_desired,t);
+    Velocity_Desired(:,i) = Path_FindDesired(:,i+2) - Path_actual(:,i+1);
+    delta_theta_temp1(:,i) = J_seven_layers_Pinv(:,:,i) * Velocity_Desired(:,i);
+    lamtha(1,i) = norm(delta_theta_temp1(:,i),2)/norm(Velocity_Desired(:,i),2);
 
-    else
-        i_Desired(1,i+1) = Find_ClosestToPoint(t,Path_desired,Path_actual(:,i+1),i_Desired(1,i));
-        
-        Velocity_Desired(:,i) = Path_desired(:,i_Desired(1,i+1)) - Path_actual(:,i+1);
-        delta_theta_temp1(:,i) = J_seven_layers_Pinv(:,:,i) * Velocity_Desired(:,i);
-        lamtha(1,i) = norm(delta_theta_temp1(:,i),2)/norm(Velocity_Desired(:,i),2);
+    delta_position(:,i) = Velocity_Desired(:,i)/lamtha(1,i) - (Path_actual(:,i+1)-Path_actual(:,i));
 
-        delta_position(:,i) = Velocity_Desired(:,i)/lamtha(1,i) - (Path_actual(:,i+1)-Path_actual(:,i));
-    end
-    
 
-    
-    
     %% 构型角度偏差 简化模型，驱动数为4
     delta_theta_temp(:,i) = J_seven_layers_Pinv(:,:,i) * delta_position(:,i);
     

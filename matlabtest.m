@@ -1,2 +1,3 @@
-a = zeros(3,4,5);
-b = a(:,:,1);
+for i = 25:50
+   Distance(i) = rand(1);
+end

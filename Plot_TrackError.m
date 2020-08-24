@@ -1,10 +1,10 @@
 function [] = Plot_TrackError(t,CoordinateError_Position)
 % ¹ì¼£¸ú×Ù×ø±êÎó²î
-plot(t,CoordinateError_Position(1,:),'LineWidth',2);
+plot(t(1:40000),CoordinateError_Position(1,1:40000),'LineWidth',2);
 hold on 
-plot(t,CoordinateError_Position(2,:),'LineWidth',2);
+plot(t(1:40000),CoordinateError_Position(2,1:40000),'LineWidth',2);
 hold on 
-plot(t,CoordinateError_Position(3,:),'LineWidth',2);
+plot(t(1:40000),CoordinateError_Position(3,1:40000),'LineWidth',2);
 hold on 
 
 grid on; 

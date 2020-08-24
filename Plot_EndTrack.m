@@ -3,6 +3,7 @@ function [] = Plot_EndTrack(Path_actual,Path_desired)
 % 绘制预期末端与实际末端轨迹plot图像
 
 % 直线末端轨迹
+% plot3(Path_actual(1,25000:43890),Path_actual(2,25000:43890),Path_actual(3,25000:43890),'LineWidth',2); 
 plot3(Path_actual(1,:),Path_actual(2,:),Path_actual(3,:),'LineWidth',2); 
 hold on;
 % 期望末端轨迹

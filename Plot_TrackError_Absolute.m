@@ -1,7 +1,7 @@
 function [] = Plot_TrackError_Absolute(t,AbsoluteError_Position)
 % ¹ì¼£¸ú¾ø¶Ô×ÙÎó²î
 
-plot(t,AbsoluteError_Position(1,:),'r','LineWidth',2);
+plot(t(1:40000),AbsoluteError_Position(1,1:40000),'r','LineWidth',2);
 hold on 
 grid on; 
 xlabel('t/s');
