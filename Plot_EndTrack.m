@@ -13,7 +13,7 @@ hold on;
 plot3(Path_Actual(1,1),Path_Actual(2,1),Path_Actual(3,1),'.','Color','g','MarkerSize',30);
 hold on;
 % 给定坐标范围
-axis([0.3 0.5 -0.4 -0.25 0.86 0.90]);
+% axis([0.3 0.5 -0.4 -0.25 0.86 0.90]);
 grid on;%打开网格
 h=legend('实际轨迹','期望轨迹','起点');
 xlabel('X/m');ylabel('Y/m');zlabel('Z/m'); 
